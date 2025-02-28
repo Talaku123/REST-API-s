@@ -1,4 +1,4 @@
-import express from "express"
+import express, { response } from "express"
 import axios from "axios"
 import bodyParser from "body-parser"
 
@@ -29,16 +29,15 @@ app.get("/", (req, res) => {
 
 app.post("/get-secret", async (req, res) => {
 
-    const searchId = req.body.id
+     const searchId = req.body.id
     try {
         const result = await axios.get(
-            API_URL + "/secrets/" + searchId,
-            req.body, config
+            API_URL + "/secrets/{id}" + searchId, config
         );
         res.render("index.ejs", {content: JSON.stringify(result.data)})
     } catch (error) {
-         res.status(404);
-        res.render("index.ejs", { content: JSON.stringify(error.response.data)})
+        console.log(error.response.data)
+        res.status(500)
     }
 })
 
@@ -46,11 +45,11 @@ app.post("/get-secret", async (req, res) => {
 app.post("/post-secret", async (req, res) => {
 
     try {
-        const result = await axios.post(API_URL + "/secrets" , req.body,config)
+        const result = await axios.post(API_URL + "/secrets", config)
         res.render("index.ejs", {content:JSON.stringify(result.data)})
     } catch (error) {
-        res.status(404)
-        res.render("index.ejs", { content: JSON.stringify(error.response.data) })
+        console.log(error.response.data)
+        res.status(500)
     }
 })
 
@@ -61,11 +60,12 @@ app.post("/put-secret", async (req, res) => {
     const searchId = req.body.id
     try {
         const result = await axios.put(
-            API_URL + "/secrets/" + searchId, req.body,config
+            API_URL + "/secrets/{id}" + searchId, config
         )
         res.render("index.ejs", {content: JSON.stringify(result.data)})
     } catch (error) {
-        res.render("index.ejs", { content: JSON.stringify(error.response.data) })
+        console.log(error.response.data)
+        res.status(500)
     }
 
 })
@@ -75,13 +75,14 @@ app.post("/patch-secret", async (req, res) => {
     const searchId = req.body.id
     try {
         const result = await axios.patch(
-            API_URL + "/secrets/" +  searchId,
-            req.body, config
+            API_URL + "/secrets/{id}" + searchId,
+            config
         )
         res.render("index.ejs", {content: JSON.stringify(result.data)})
     } catch (error) {
 
-        res.render("index.ejs", {content: JSON.stringify(error.response.data)})
+        console.log(error.response.data)
+        res.status(404)
     }
 })
 
@@ -90,14 +91,13 @@ app.post("/delete-secret", async (req, res) => {
     const searchId = req.body.id
     try {
         const result = await axios.delete(
-          API_URL + "/secrets/" + searchId,
-          req.body,
+            API_URL + "/secrets/{id}" + searchId,
           config
         );
         res.render("index.ejs", {content: JSON.stringify(result.data)})
     } catch (error) {
-
-        res.render("index.ejs", {content: JSON.stringify(error.response.data)})
+         console.log(error.response.data)
+         res.status(404)
     }
 })
 
